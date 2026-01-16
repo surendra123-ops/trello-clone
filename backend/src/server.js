@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
 
+const { runSeed } = require('../prisma/seed.js'); // <-- import seed function
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -32,6 +34,17 @@ app.use(errorHandler);
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
+
+// ========== AUTO-SEED LOGIC FOR RENDER FREE TIER ==========
+(async () => {
+  try {
+    console.log("Checking if DB needs seed...");
+    await runSeed();
+  } catch (err) {
+    console.error("Error during auto-seed:", err);
+  }
+})();
+// ==========================================================
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
