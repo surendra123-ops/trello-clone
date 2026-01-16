@@ -8,7 +8,9 @@ import CardModal from '../components/CardModal';
 import * as api from '../services/api';
 
 // Default board ID from seed data - you'll need to update this after seeding
-const DEFAULT_BOARD_ID = 'your-board-id-here';
+// const DEFAULT_BOARD_ID = 'your-board-id-here';
+const  DEFAULT_BOARD_ID = process.env.REACT_APP_DEFAULT_BOARD_ID;
+
 
 function Board() {
   const { board, loading, error, fetchBoard, fetchLabelsAndMembers, updateBoardState } = useBoard();
