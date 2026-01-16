@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lists     List[]
+}
+
+model List {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+  boardId   String
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards     Card[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([boardId])
+}
+
+model Card {
+  id          String        @id @default(uuid())
+  title       String
+  description String?       @db.Text
+  position    Int
+  dueDate     DateTime?
+  archived    Boolean       @default(false)
+  listId      String
+  list        List          @relation(fields: [listId], references: [id], onDelete: Cascade)
+  labels      CardLabel[]
+  members     CardMember[]
+  checklists  Checklist[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([listId])
+}
+
+model Label {
+  id        String      @id @default(uuid())
+  name      String
+  color     String
+  cards     CardLabel[]
+  createdAt DateTime    @default(now())
+}
+
+model Member {
+  id        String       @id @default(uuid())
+  name      String
+  email     String       @unique
+  avatar    String?
+  cards     CardMember[]
+  createdAt DateTime     @default(now())
+}
+
+model CardLabel {
+  id      String @id @default(uuid())
+  cardId  String
+  labelId String
+  card    Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  label   Label  @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, labelId])
+  @@index([cardId])
+  @@index([labelId])
+}
+
+model CardMember {
+  id       String @id @default(uuid())
+  cardId   String
+  memberId String
+  card     Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, memberId])
+  @@index([cardId])
+  @@index([memberId])
+}
+
+model Checklist {
+  id        String          @id @default(uuid())
+  title     String
+  position  Int
+  cardId    String
+  card      Card            @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  items     ChecklistItem[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([cardId])
+}
+
+model ChecklistItem {
+  id          String    @id @default(uuid())
+  title       String
+  completed   Boolean   @default(false)
+  position    Int
+  checklistId String
+  checklist   Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([checklistId])
+}
