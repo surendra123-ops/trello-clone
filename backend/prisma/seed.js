@@ -3,16 +3,21 @@ const prisma = new PrismaClient();
 
 async function runSeed() {
   try {
-    // Check if already seeded
-    const boardCount = await prisma.board.count();
-    if (boardCount > 0) {
+    console.log("Checking if database needs seed...");
+
+    // Get existing board if present
+    const existingBoard = await prisma.board.findFirst();
+
+    // If board exists -> print ID and exit
+    if (existingBoard) {
       console.log("Database already seeded.");
+      console.log(`Existing Board ID: ${existingBoard.id}`);
       return;
     }
 
-    console.log("Starting seed...");
+    console.log("No board found — running full seed...");
 
-    // Clear existing data (optional, safe for fresh DB)
+    // Clear existing tables (safe for fresh DB)
     await prisma.checklistItem.deleteMany();
     await prisma.checklist.deleteMany();
     await prisma.cardMember.deleteMany();
@@ -36,32 +41,16 @@ async function runSeed() {
     // Create members
     const members = await Promise.all([
       prisma.member.create({ 
-        data: { 
-          name: 'John Doe', 
-          email: 'john@example.com',
-          avatar: 'https://i.pravatar.cc/150?img=1'
-        } 
+        data: { name: 'John Doe', email: 'john@example.com', avatar: 'https://i.pravatar.cc/150?img=1' }
       }),
       prisma.member.create({ 
-        data: { 
-          name: 'Jane Smith', 
-          email: 'jane@example.com',
-          avatar: 'https://i.pravatar.cc/150?img=5'
-        } 
+        data: { name: 'Jane Smith', email: 'jane@example.com', avatar: 'https://i.pravatar.cc/150?img=5' }
       }),
       prisma.member.create({ 
-        data: { 
-          name: 'Mike Johnson', 
-          email: 'mike@example.com',
-          avatar: 'https://i.pravatar.cc/150?img=12'
-        } 
+        data: { name: 'Mike Johnson', email: 'mike@example.com', avatar: 'https://i.pravatar.cc/150?img=12' }
       }),
       prisma.member.create({ 
-        data: { 
-          name: 'Sarah Williams', 
-          email: 'sarah@example.com',
-          avatar: 'https://i.pravatar.cc/150?img=9'
-        } 
+        data: { name: 'Sarah Williams', email: 'sarah@example.com', avatar: 'https://i.pravatar.cc/150?img=9' }
       }),
     ]);
 
@@ -164,7 +153,7 @@ async function runSeed() {
       ],
     });
 
-    // Assign members to cards
+    // Assign members
     await prisma.cardMember.createMany({
       data: [
         { cardId: card1.id, memberId: members[3].id },
@@ -197,7 +186,9 @@ async function runSeed() {
     console.log(`Board ID: ${board.id}`);
 
   } catch (err) {
-    console.error(err);
+    console.error("Seed error:", err);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
