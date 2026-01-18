@@ -118,10 +118,10 @@ function CardModal({ card, onClose, onUpdate }) {
   const cardMembers = card.members.map(cm => cm.member);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-8">
-      <div className="bg-white rounded-lg w-full max-w-3xl mx-4 shadow-xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-2 sm:py-8">
+      <div className="bg-white rounded-lg w-full max-w-3xl mx-2 sm:mx-4 shadow-xl">
         {/* Header */}
-        <div className="p-6 border-b">
+        <div className="p-4 sm:p-6 border-b">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               {isEditingTitle ? (
@@ -139,7 +139,7 @@ function CardModal({ card, onClose, onUpdate }) {
                       handleUpdateCard({ title });
                     }
                   }}
-                  className="text-2xl font-bold w-full border-b-2 border-blue-500 outline-none"
+                  className="text-2xl font-bold w-full border-b-2 border-trello-primary outline-none"
                   autoFocus
                 />
               ) : (
@@ -163,9 +163,9 @@ function CardModal({ card, onClose, onUpdate }) {
           </div>
         </div>
 
-        <div className="p-6 grid grid-cols-3 gap-6">
+        <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Main Content */}
-          <div className="col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Labels */}
             {cardLabels.length > 0 && (
               <div>
@@ -249,7 +249,7 @@ function CardModal({ card, onClose, onUpdate }) {
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-trello-primary resize-none"
                     rows={4}
                     autoFocus
                   />
@@ -259,7 +259,7 @@ function CardModal({ card, onClose, onUpdate }) {
                         setIsEditingDescription(false);
                         handleUpdateCard({ description });
                       }}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      className="px-4 py-2 bg-trello-primary text-white rounded hover:bg-trello-primary-dark transition-colors"
                     >
                       Save
                     </button>
@@ -307,13 +307,13 @@ function CardModal({ card, onClose, onUpdate }) {
                     if (e.key === 'Escape') setIsAddingChecklist(false);
                   }}
                   placeholder="Checklist title..."
-                  className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-trello-primary"
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
                   <button
                     onClick={handleAddChecklist}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className="px-4 py-2 bg-trello-primary text-white rounded hover:bg-trello-primary-dark transition-colors"
                   >
                     Add
                   </button>
@@ -461,7 +461,7 @@ function ChecklistSection({ checklist, onAddItem, onToggleItem, onDeleteItem }) 
       {/* Progress Bar */}
       <div className="w-full h-2 bg-gray-200 rounded-full mb-3">
         <div
-          className="h-full bg-blue-600 rounded-full transition-all"
+          className="h-full bg-trello-primary rounded-full transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -501,13 +501,13 @@ function ChecklistSection({ checklist, onAddItem, onToggleItem, onDeleteItem }) 
               if (e.key === 'Escape') setIsAdding(false);
             }}
             placeholder="Add an item..."
-            className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full px-3 py-2 border rounded outline-none focus:ring-2 focus:ring-trello-primary text-sm"
             autoFocus
           />
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleAdd}
-              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+              className="px-3 py-1 bg-trello-primary text-white rounded hover:bg-trello-primary-dark transition-colors text-sm"
             >
               Add
             </button>
