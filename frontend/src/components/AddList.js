@@ -23,7 +23,7 @@ function AddList({ boardId }) {
 
   if (!isAdding) {
     return (
-      <div className="w-72 flex-shrink-0">
+      <div className="w-80 sm:w-72 flex-shrink-0">
         <button
           onClick={() => setIsAdding(true)}
           className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg px-4 py-3 flex items-center gap-2 transition-colors"
@@ -36,7 +36,7 @@ function AddList({ boardId }) {
   }
 
   return (
-    <div className="w-72 bg-gray-100 rounded-lg p-2 flex-shrink-0">
+    <div className="w-80 sm:w-72 bg-gray-100 rounded-lg p-2 flex-shrink-0">
       <input
         type="text"
         autoFocus
@@ -47,12 +47,12 @@ function AddList({ boardId }) {
           if (e.key === 'Escape') setIsAdding(false);
         }}
         placeholder="Enter list title..."
-        className="w-full px-3 py-2 mb-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-3 py-2 mb-2 border rounded outline-none focus:ring-2 focus:ring-trello-primary"
       />
       <div className="flex gap-2">
         <button
           onClick={handleAdd}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-trello-primary text-white rounded hover:bg-trello-primary-dark transition-colors"
         >
           Add List
         </button>
