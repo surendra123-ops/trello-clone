@@ -8,10 +8,7 @@ import CardModal from '../components/CardModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import * as api from '../services/api';
 
-// Default board ID from seed data - you'll need to update this after seeding
-// const DEFAULT_BOARD_ID = 'your-board-id-here';
-const  DEFAULT_BOARD_ID = process.env.REACT_APP_DEFAULT_BOARD_ID;
-
+const DEFAULT_BOARD_ID = process.env.REACT_APP_DEFAULT_BOARD_ID || 'default-board-id';
 
 function Board() {
   const { board, loading, error, fetchBoard, fetchLabelsAndMembers, updateBoardState } = useBoard();
@@ -19,7 +16,6 @@ function Board() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // In a real app, you'd get the board ID from URL params or similar
     fetchBoard(DEFAULT_BOARD_ID);
     fetchLabelsAndMembers();
   }, [fetchBoard, fetchLabelsAndMembers]);
@@ -31,7 +27,6 @@ function Board() {
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
     if (type === 'list') {
-      // Reorder lists
       const newLists = Array.from(board.lists);
       const [removed] = newLists.splice(source.index, 1);
       newLists.splice(destination.index, 0, removed);
@@ -40,8 +35,8 @@ function Board() {
 
       try {
         await api.reorderLists(newLists.map(list => list.id));
-      } catch (error) {
-        console.error('Failed to reorder lists:', error);
+      } catch (err) {
+        console.error('Failed to reorder lists:', err);
         fetchBoard(DEFAULT_BOARD_ID);
       }
     } else if (type === 'card') {
@@ -49,7 +44,6 @@ function Board() {
       const destListId = destination.droppableId;
 
       if (sourceListId === destListId) {
-        // Reorder within same list
         const list = board.lists.find(l => l.id === sourceListId);
         const newCards = Array.from(list.cards);
         const [removed] = newCards.splice(source.index, 1);
@@ -57,25 +51,22 @@ function Board() {
 
         updateBoardState(prev => ({
           ...prev,
-          lists: prev.lists.map(l =>
-            l.id === sourceListId ? { ...l, cards: newCards } : l
-          ),
+          lists: prev.lists.map(l => (l.id === sourceListId ? { ...l, cards: newCards } : l)),
         }));
 
         try {
           await api.reorderCards(newCards.map(card => card.id), sourceListId);
-        } catch (error) {
-          console.error('Failed to reorder cards:', error);
+        } catch (err) {
+          console.error('Failed to reorder cards:', err);
           fetchBoard(DEFAULT_BOARD_ID);
         }
       } else {
-        // Move card to different list
         const sourceList = board.lists.find(l => l.id === sourceListId);
         const destList = board.lists.find(l => l.id === destListId);
-        
+
         const sourceCards = Array.from(sourceList.cards);
         const destCards = Array.from(destList.cards);
-        
+
         const [removed] = sourceCards.splice(source.index, 1);
         destCards.splice(destination.index, 0, removed);
 
@@ -90,8 +81,8 @@ function Board() {
 
         try {
           await api.moveCard(removed.id, sourceListId, destListId, destination.index);
-        } catch (error) {
-          console.error('Failed to move card:', error);
+        } catch (err) {
+          console.error('Failed to move card:', err);
           fetchBoard(DEFAULT_BOARD_ID);
         }
       }
@@ -122,18 +113,16 @@ function Board() {
     );
   }
 
-  if (!board) {
-    return null;
-  }
+  if (!board) return null;
 
   return (
     <div className="h-screen flex flex-col bg-trello-dark">
-      <Header 
-        boardTitle={board.title} 
+      <Header
+        boardTitle={board.title}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      
+
       <div className="flex-1 overflow-x-auto overflow-y-hidden p-2 sm:p-4">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="board" type="list" direction="horizontal">
@@ -165,9 +154,7 @@ function Board() {
           onClose={closeModal}
           onUpdate={async () => {
             await fetchBoard(DEFAULT_BOARD_ID);
-            const updatedCard = board.lists
-              .flatMap(l => l.cards)
-              .find(c => c.id === selectedCard.id);
+            const updatedCard = board.lists.flatMap(l => l.cards).find(c => c.id === selectedCard.id);
             if (updatedCard) setSelectedCard(updatedCard);
           }}
         />
