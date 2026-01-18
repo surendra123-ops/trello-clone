@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import List from '../components/List';
 import AddList from '../components/AddList';
 import CardModal from '../components/CardModal';
+import LoadingSpinner from '../components/LoadingSpinner';
 import * as api from '../services/api';
 
 // Default board ID from seed data - you'll need to update this after seeding
@@ -107,15 +108,15 @@ function Board() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-500 to-purple-600">
-        <div className="text-white text-2xl">Loading...</div>
+      <div className="flex items-center justify-center h-screen bg-trello-dark">
+        <LoadingSpinner />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+      <div className="flex items-center justify-center h-screen bg-trello-dark">
         <div className="text-white text-xl">Error: {error}</div>
       </div>
     );
@@ -126,14 +127,14 @@ function Board() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-blue-500 to-purple-600">
+    <div className="h-screen flex flex-col bg-trello-dark">
       <Header 
         boardTitle={board.title} 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
       
-      <div className="flex-1 overflow-x-auto overflow-y-hidden p-4">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden p-2 sm:p-4">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="board" type="list" direction="horizontal">
             {(provided) => (
